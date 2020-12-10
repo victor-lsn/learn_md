@@ -8,6 +8,8 @@ git config --gloable user.email VictorLSN@163.com    设置邮箱地址
 git config --list    查看所有配置信息
 ~~~
 
+
+
 ## 三种状态与工作模式
 
 | 状态                | 描述                                                         |
@@ -29,6 +31,8 @@ Git工作流程描述：
 1. 在工作区中修改文件
 2. 对修改的文件进行快照，添加到暂存区
 3. 提交更新，将保存在暂存区的文件快照永久转储到Git仓库
+
+
 
 ## 流程
 
@@ -65,6 +69,8 @@ Git工作流程描述：
    git log -5 --pretty=oneline    显示5行日志，并每一行一个
    ~~~
 
+
+
 ## 时光穿梭
 
 ~~~shell
@@ -85,6 +91,8 @@ git checkout -- test.txt
 git rm test.txt    可以同时删除本地目录中的文件和本地仓库中的
 ~~~
 
+
+
 ##  远程仓库
 
 ~~~shell
@@ -94,7 +102,48 @@ git clone 地址    克隆到本地
 **推送到远程仓库**
 
 1. 初始化本地仓库
+
 2. 添加文件到暂存区
+
 3. 提交本地库
+
 4. 本地库与远程库绑定
+
+   ~~~shell
+   git remote add origin https://github.com/victor-lsn/learn_md.git
+   ~~~
+
 5. 推送
+
+   ~~~shell
+   git push -u origin master
+   ~~~
+
+
+
+**SSH推送**
+
+上方为Https方式，比较简单，使用SSH方式是Git推荐的方式，时间与响应效率都更高，下方进行配置
+
+1. 使用Git客户端生成SSH公钥  
+
+   ~~~shell
+   ssh-keygen -t rsa -C "VictorLSN@163.com邮箱"
+   ~~~
+
+2. 下方找到生成public key的保存路径，使用记事本打开路径中的.pub文件并全选复制
+
+3. 去github官网用户中的setting中，找到SSH and GPC keys创建一个SSH key，并把公钥粘贴进去
+
+4. 在第四步中修改地址为SSH地址，其余操作不变
+
+
+
+## 分支操作
+
+
+
+
+
+
+
