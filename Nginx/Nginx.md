@@ -70,19 +70,19 @@ systemctl stop firewalld  # 禁用
 
 在windows系统中的host文件中配置域名与ip地址的对应关系，加入192.168.1.11	www.123.com
 
-![](C:\Users\victor\learn\学习资料\Nginx\img\Snipaste_2020-12-30_23-18-12.png)
+![](.\img\Snipaste_2020-12-30_23-18-12.png)
 
 
 
 在nginx.conf配置文件中配置
 
-![](C:\Users\victor\learn\学习资料\Nginx\img\Snipaste_2020-12-31_19-52-42.png)
+![](./img\Snipaste_2020-12-31_19-52-42.png)
 
 如果没有实现效果关闭防火墙即可
 
 效果
 
-![](C:\Users\victor\learn\学习资料\Nginx\img\Snipaste_2020-12-31_21-23-53.png)
+![](.\img\Snipaste_2020-12-31_21-23-53.png)
 
 #### 实例2
 
@@ -100,13 +100,13 @@ systemctl stop firewalld  # 禁用
 
 配置nginx.conf配置文件
 
-![](C:\Users\victor\learn\学习资料\Nginx\img\Snipaste_2020-12-31_21-16-54.png)
+![](.\img\Snipaste_2020-12-31_21-16-54.png)
 
 效果
 
-![](C:\Users\victor\learn\学习资料\Nginx\img\Snipaste_2020-12-31_21-22-56.png)
+![](.\img\Snipaste_2020-12-31_21-22-56.png)
 
-![](C:\Users\victor\learn\学习资料\Nginx\img\Snipaste_2020-12-31_21-23-03.png)
+![](.\img\Snipaste_2020-12-31_21-23-03.png)
 
 
 
