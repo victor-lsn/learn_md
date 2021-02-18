@@ -1,5 +1,58 @@
 # Nginx
 
+### 安装Nginx
+
+> 安装所需环境
+>
+> 1. **gcc 安装**
+>
+>    ```shell
+>    yum install gcc-c++
+>    ```
+>
+> 2.  **PCRE pcre-devel 安装**
+>
+>    ```
+>    yum install -y pcre pcre-devel
+>    ```
+>
+> 3.  **zlib 安装**
+>
+>    ```
+>    yum install -y zlib zlib-devel
+>    ```
+>
+> 4. **OpenSSL 安装**
+>
+>    ```
+>    yum install -y openssl openssl-devel
+>    ```
+
+1.直接下载`.tar.gz`安装包，地址：https://nginx.org/en/download.html
+
+2.使用`wget`命令下载（推荐）。确保系统已经安装了wget，如果没有安装，执行 yum install wget 安装。
+
+```shell
+wget -c https://nginx.org/download/nginx-1.12.0.tar.gz
+```
+
+3.解压并进入目录，执行 ./configure
+
+4.编译安装
+
+```
+make
+make install
+```
+
+5.找到nginx
+
+~~~shell
+whereis nginx
+~~~
+
+
+
 ### 命令
 
 首先进入到nginx目录中的sbin目录中，随后执行命令
