@@ -286,6 +286,14 @@ public class AccountServiceImpl implements IAccountService {
 
    4. aop:after：无论方法是否有异常都最后执行
 
+#### 相关概念
+
+连接点：每一个方法的每一个位置都是连接点
+
+切入点：真正执行增强的连接点为切入点
+
+切入点表达式：从连接点中选择切入点
+
 ~~~xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -505,10 +513,26 @@ List<Account> accountList = jdbcTemplate.query("select * from account where mone
 5. 在事务通知内配置事务的属性
 
    - isolation：用于指定事务的隔离级别，默认值default，表示使用数据库的隔离级别
+
    - propagation：指定事务的传播行为，默认值是required，表示一定有事务。查询方法可以使用supports
+
+     ​	   注：如果是required那么所有属性都跟原事务一致，自己设置的如timeout等不起作用。而且嵌套事		务的方法必须是其他类的事务方法，不然调用本类方法是不存在代理对象没办法事务控制
+
+     - 事务行为												说明
+       PROPAGATION_REQUIRED	支持当前事务，假设当前没有事务。就新建一个事务
+       PROPAGATION_SUPPORTS	支持当前事务，假设当前没有事务，就以非事务方式运行
+       PROPAGATION_MANDATORY	支持当前事务，假设当前没有事务，就抛出异常
+       PROPAGATION_REQUIRES_NEW	新建事务，假设当前存在事务。把当前事务挂起
+       PROPAGATION_NOT_SUPPORTED	以非事务方式运行操作。假设当前存在事务，就把当前事务挂起
+       PROPAGATION_NEVER	以非事务方式运行，假设当前存在事务，则抛出异常
+       PROPAGATION_NESTED	如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作。
+
    - read-only：指定事务是否为只读，查询方法设置为true即可
+
    - timeout：指定超时时间，默认值为-1,表示永不超时，如果设置值，则以秒为单位
+
    - no-rollback-for：用于指定一个异常，当产生该异常时，事务回滚，产生其他异常不回滚，不使用则表示都回滚
+
    - rollback-for：用于指定一个异常，当产生该异常时，事务不回滚，产生其他异常才回滚，不使用则表示都回滚
 
 ~~~xml
@@ -634,6 +658,10 @@ List<Account> accountList = jdbcTemplate.query("select * from account where mone
            inputStream.close();
        }
    ~~~
+
+增加后获取主键自增ID，使用insert中的属性useGeneratedKeys="true" keyProperty="userId"
+
+keyProperty为自动封装为对象的哪个属性
 
 
 

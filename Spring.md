@@ -246,7 +246,7 @@
   </bean>
   ~~~
 
-* **autowire="byType"：保证class（类）唯一，可以省略id，但是类型必须一致**
+* **autowire="byType"：保证class（类）唯一，可以省略id，但是类型必须一致，类型有多个会报错**
 
   ~~~xml
   <bean class="com.victor.pojo.Cat"/>
@@ -255,6 +255,10 @@
       <property name="name" value="victor"/>
   </bean>
   ~~~
+
+* **autowire="constructor"：先去寻找构造器，然后先按类型装配，如果发现类型有多个就按参数名装配**
+
+
 
 * **注解实现自动装配**
 
