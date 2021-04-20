@@ -2445,3 +2445,195 @@ public class DruidUtils {
     }
 }
 ~~~
+
+
+
+# JUC
+
+### volatile
+
+较为轻量级的同步策略
+
+运行下方代码，发现run方法中已经修改了flag，但是主线程一直感知不到其他线程的修改，导致死循环
+
+解决方法：
+
+- 或者使用 synchronized 包住，每次循环都刷新缓存（缺点：效率太低，使用第二种方法）
+- 在共享数据添加volatile关键字进行修饰，保证内存中的数据是可见的
+
+synchronized与volatile的区别：
+
+1. volatile不具备互斥性
+2. volatile不能保证变量的原子性
+
+~~~java
+public class TestVolatile {
+
+    public static void main(String[] args) {
+        TextThread textThread = new TextThread();
+        textThread.start();
+        while (true) {
+//            synchronized (TestVolatile.class){
+//                if (textThread.getFlag()) {
+//                    System.out.println("-------------------");
+//                    break;
+//                }
+//            }
+
+            if (textThread.getFlag()) {
+                System.out.println("-------------------");
+                break;
+            }
+        }
+    }
+}
+
+
+class TextThread extends Thread {
+
+    private Boolean flag = false;
+
+    @Override
+    public void run() {
+        try {
+            sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        flag = true;
+        System.out.println("flag被修改了：" + flag);
+    }
+
+    public Boolean getFlag() {
+        return flag;
+    }
+}
+~~~
+
+
+
+### 原子性与CAS算法
+
+原子变量：jdk1.5后java.util.concurrent.atomic包下提供了常用的原子变量：
+
+1. volatile保证内存可见性
+2. CAS（Compare-And-Swap）算法保证数据的原子性，CAS 算法是硬件对于并发操作共享数据的支持
+
+CAS包含了三个操作数：
+
+1. 内存值 V
+2. 预估值 A
+3. 更新值 B
+4. 当且仅当 V == A 时，V = B，否则，将不做任何操作
+
+下方代码按照注释中执行的话会出现原子操作问题，因为++操作时分为读，改，写三个步骤要保证原子性，而下方运行时把这些分开导致数据出错，当有这类原子操作时需要使用 java.util.concurrent.atomic 中的类进行操作即可
+
+~~~java
+public class TestAtomic {
+    public static void main(String[] args) {
+        for (int i = 0; i < 10; i++) {
+            TestThread testThread = new TestThread();
+            testThread.start();
+        }
+
+    }
+}
+
+class TestThread extends Thread {
+    //static Integer flag = 0;
+    static AtomicInteger flag = new AtomicInteger(0);
+
+    @Override
+    public void run() {
+        try {
+            sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //System.out.println(flag++);
+        System.out.println(flag.incrementAndGet());
+    }
+}
+~~~
+
+### ConcurrentHashMap锁分段机制
+
+Hashtable 与 ConcurrentHashMap 都采用了锁机制，所以都是线程安全的
+
+但是 Hashtable 锁的是 this 当前整个对象，所以在对当前对象增、删、改、查等操作时都需要竞争锁而导致从并发到串行执行，效率低。
+
+jdk1.7  ConcurrentHashMap 利用的是锁分段机制，Map 子类数组长度初始值是16，根据 Hash 放到相应的位置上，ConcurrentHashMap 是数组的每一个索引是一把锁，这样就可以大大提升效率
+
+jdk1.8  ConcurrentHashMap 使用CAS算法解决并发问题，效率更上一层楼
+
+使用集合的迭代器时，下列这样边读取边添加，会出现并发修改异常 java.util.ConcurrentModificationException
+
+~~~java
+Iterator iterator = list.iterator();
+
+while (iterator.hasNext()) {
+    System.out.println(iterator.next());
+    list.add(4);
+}
+~~~
+
+### CountDownLatch闭锁
+
+CountDownLatch 是一个同步辅助类，在完成一组正在其他线程中执行的操作之前，他允许一个或多个线程一直等待 
+
+例如下方想要计算所有线程运行完成所需时间就需要等其他的分线程执行完毕，就需要设置 CountDownLatch 来控制，每次一个线程运行完毕就要执行 countDown 方法进行 -1 操作，并使用 await 方法进行等待
+
+注：在使用实现 Callable 的方式创建线程获取返回值时，返回值总是在线程结束后才能执行获取方法，所以也可以实现闭锁的效果
+
+~~~java
+public class TestCountDownLatch {
+    public static void main(String[] args){
+        CountDownLatch countDownLatch = new CountDownLatch(20);
+        TestThread22 testThread22 = new TestThread22(countDownLatch);
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 20; i++) {
+            new Thread(testThread22).start();
+        }
+
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        long end = System.currentTimeMillis();
+        System.out.println("用时：" + (end - start) + "ms");
+    }
+}
+
+class TestThread22 implements Runnable {
+
+    public CountDownLatch countDownLatch;
+
+    public TestThread22(CountDownLatch countDownLatch){
+        this.countDownLatch = countDownLatch;
+    }
+
+    @Override
+    public void run() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(Thread.currentThread().getName());
+        countDownLatch.countDown();
+    }
+}
+~~~
+
+### ReadWriteLock读写锁
+
+读写 / 写写 会互斥
+
+读读 不需要互斥
+
+
+
+
+
